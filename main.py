@@ -2,6 +2,7 @@ import my_parser
 import lark
 from equiv import Equiv
 from searchnode import SearchNode
+from expressionchecker import ExpressionChecker
 
 
 def main():
@@ -56,16 +57,28 @@ def main():
             )\
         )"
     
-    node = SearchNode(equation)
+    # node = SearchNode(equation)
     
-    print(node.tree.pretty())
-    node.findChildNodes()
-    print("equivalents: ")
-    for i in node.childNodes:
-        print("------------------------------------------------------------")
-        print(i.tree.pretty())
+    # print(node.tree.pretty())
+    # node.findChildNodes()
+    # print("equivalents: ")
+    # for i in node.childNodes:
+    #     print("------------------------------------------------------------")
+    #     print(i.tree.pretty())
+    
+    
+    eq1: str = "mul(var(b), sum(num(999), num(888)))"
+    eq2: str = "sum( mul(var(b),num(999)), mul(var(b),num(888)) )"
 
-
+    checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
+    search = checker.search()
+    ans = next(search)
+    print(ans[0])
+    print("--------------------------------------------")
+    print(ans[1].tree.pretty())
+    print("--------------------------------------------")
+    print(ans[2].tree.pretty())
+    
 
 if __name__ == "__main__":
     main()
