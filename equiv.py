@@ -12,8 +12,14 @@ class Equiv:
     @staticmethod
     def getEquiv(equation: lark.Tree) -> List[lark.Tree]:
         "Function to get equivalents"
+        
+        
+        
         ret: List = []
         ch :List = []
+        
+        if(not isinstance(equation,Tree)):
+            return ret
         
         normalizer: NormalizeTree = NormalizeTree()
         
@@ -44,9 +50,4 @@ class Equiv:
                 resElem = Tree("sum",resChildren)
                 ret.append(resElem)
                         
-                        
-                        
-            
-            
-        
         return ret

@@ -1,6 +1,7 @@
 import my_parser
 import lark
 from equiv import Equiv
+from searchnode import SearchNode
 
 
 def main():
@@ -31,7 +32,7 @@ def main():
     # print(norm_res.pretty())
     # print(norm_res)
     
-    res: lark.Tree = parser.parse(
+    equation = \
         "mul( \
             var(a),\
             var(e),\
@@ -44,13 +45,26 @@ def main():
                 fraq(\
                     num(888),\
                     num(999)\
+                ),\
+                mul(\
+                    sum(\
+                        num(221),\
+                        var(a)\
+                    ),\
+                    var(b)\
                 )\
             )\
         )"
-    )
-    print(res.pretty())
-    eq = Equiv.getEquiv(res.children[0])
-    print(eq[0].pretty())
+    
+    node = SearchNode(equation)
+    
+    print(node.tree.pretty())
+    node.findChildNodes()
+    print("equivalents: ")
+    for i in node.childNodes:
+        print("------------------------------------------------------------")
+        print(i.tree.pretty())
+
 
 
 if __name__ == "__main__":
