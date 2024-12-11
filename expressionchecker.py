@@ -3,6 +3,7 @@ from typing import List
 from searchnode import SearchNode
 from collections import defaultdict
 from copy import deepcopy
+from normalize import NormalizeTree
 
 
 class ExpressionChecker:
@@ -14,6 +15,20 @@ class ExpressionChecker:
         self.forest2: SearchNode = SearchNode(str2)
         self.queue1: List[SearchNode] = [self.forest1]
         self.queue2: List[SearchNode] = [self.forest2]
+    
+    @staticmethod
+    def findNodeInSearchSpace(self,node:SearchNode, forestRoot: SearchNode) ->SearchNode:
+        ret: SearchNode = None
+        if(node == forestRoot):
+            return forestRoot
+        else:
+            for ch in node.childNodes:
+                ret = ExpressionChecker.findNodeInSearchSpace(ch)
+                if(ret is not None):
+                    return ret
+        return ret
+        
+        
 
     def search(self):
         iteration: int = 0

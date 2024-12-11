@@ -6,33 +6,9 @@ from expressionchecker import ExpressionChecker
 
 
 def main():
-    parser: my_parser.MyParser
-    parser = my_parser.MyParser()
 
-    # res: lark.Tree = parser.parse(
-    #     "sum( \
-    #         var(a),\
-    #         var(e),\
-    #         var(c),\
-    #         var(c),\
-    #         num(888),\
-    #         sum(\
-    #             var(g),\
-    #             num(77),\
-    #             fraq(\
-    #                 num(888),\
-    #                 num(999)\
-    #             )\
-    #         )\
-    #     )"
-    # )
-    # print(res.pretty())
 
-    # normalizer: my_parser.NormalizeTree = my_parser.NormalizeTree()
-    # norm_res: lark.Tree = normalizer.transform(res)
-    # print(norm_res.pretty())
-    # print(norm_res)
-    
+
     equation = \
         "mul( \
             var(a),\
@@ -57,27 +33,46 @@ def main():
             )\
         )"
     
-    # node = SearchNode(equation)
+
+    eq1: str = "sum(\
+            mul(var(a),var(b)),\
+            mul(var(b),var(c)),\
+            mul(var(d),sum(var(c),var(e)))\
+            \
+            \
+            \
+            \
+            \
+        )"
+    eq2: str = "sum(\
+            mul(var(b),sum(var(a),var(c))),\
+            mul(var(c),var(d)),\
+            mul(var(d),var(e))\
+            \
+            \
+            \
+            \
+            \
+        )"
+
+    # eq2: str = "sum(var(a),num(7))"
     
-    # print(node.tree.pretty())
-    # node.findChildNodes()
-    # print("equivalents: ")
-    # for i in node.childNodes:
-    #     print("------------------------------------------------------------")
-    #     print(i.tree.pretty())
-    
-    
-    eq1: str = "mul(var(b), sum(num(999), num(888)))"
-    eq2: str = "sum( mul(var(b),num(999)), mul(var(b),num(888)) )"
+    print("before")
+    print("--------------------------------------------")
+    print(SearchNode(eq1))
+    print("--------------------------------------------")
+    print(SearchNode(eq2))
+    print("--------------------------------------------")
 
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
     search = checker.search()
     ans = next(search)
+    print("after")
     print(ans[0])
     print("--------------------------------------------")
-    print(ans[1].tree.pretty())
+    print(ans[1])
     print("--------------------------------------------")
-    print(ans[2].tree.pretty())
+    print(ans[2])
     
 
 if __name__ == "__main__":
