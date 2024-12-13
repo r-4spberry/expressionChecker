@@ -6,78 +6,49 @@ from expressionchecker import ExpressionChecker
 
 
 def main():
-
-
-
-    equation = \
-        "mul( \
-            var(a),\
-            var(e),\
-            var(c),\
-            var(c),\
-            num(888),\
-            sum(\
-                var(g),\
-                num(77),\
-                fraq(\
-                    num(888),\
-                    num(999)\
-                ),\
-                mul(\
-                    sum(\
-                        num(221),\
-                        var(a)\
-                    ),\
-                    var(b)\
-                )\
-            )\
-        )"
     
-
-    eq1: str = "sum(\
-            mul(var(a),var(b)),\
-            mul(var(b),var(c)),\
-            mul(var(d),sum(var(c),var(e)))\
-            \
-            \
-            \
-            \
-            \
-        )"
-    eq2: str = "sum(\
-            mul(var(b),sum(var(a),var(c))),\
-            mul(var(c),var(d)),\
-            mul(var(d),var(e))\
-            \
-            \
-            \
-            \
-            \
-        )"
-
-    # eq2: str = "sum(var(a),num(7))"
+    eq1 = '''
+        sum(
+            mul(
+                var(a),
+                num(3),
+                num(9)
+            ),
+            mul(
+                pow(var(a), num(2)),
+                pow(var(a), var(g))                
+            ),
+            fraq(
+                sum(
+                    var(a), 
+                    var(b)
+                ),
+                var(c)
+            )            
+        )
+    '''
     
-    print("before")
-    print("--------------------------------------------")
-    print(SearchNode(eq1))
-    print("--------------------------------------------")
-    print(SearchNode(eq2))
-    print("--------------------------------------------")
-
+    eq2 = "var(a)"
+    
+    
+    
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
-    search = checker.search()
-    ans = next(search)
-    print("after")
-    print(ans[0])
-    print("--------------------------------------------")
-    print(ans[1])
-    print("--------------------------------------------")
-    print(ans[2])
-    print("--------------------------------------------")
-    print(checker.forest1.forestPretty(6))
-    print("--------------------------------------------")
-    print(checker.forest2.forestPretty(6))
+    run = checker.search()
     
+    ans = next(run)
+    
+    print("-------------------------------------------------------")
+    print("res:")
+    print(ans[0])
+    print(ans[1])
+    print(ans[2])
+    print("-------------------------------------------------------")
+    print("forest1:")
+    print(checker.forest1.forestPretty(depth = 3))
+    print("-------------------------------------------------------")
+    print("forest2:")
+    print(checker.forest2.forestPretty(depth = 3))
+    print("-------------------------------------------------------")
     
     
     

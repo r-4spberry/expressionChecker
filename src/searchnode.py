@@ -130,12 +130,12 @@ class SearchNode:
         
         
     def forestPretty(self,depth:int = 3,curDepth:int = 0) -> str:
-        ret = " "*curDepth + self.__str__() + "\n"
+        ret = "\t"*curDepth + self.__str__() + "\n"
         if curDepth < depth:
             for ch in self.childNodes:
                 ret += ch.forestPretty(depth,curDepth+1)
         elif len(self.childNodes) != 0:
-            ret += " "*(curDepth+1) + "..." + "\n"
+            ret += "\t"*(curDepth+1) + "..." + "\n"
         
         
         return ret
