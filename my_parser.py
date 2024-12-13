@@ -23,7 +23,6 @@ class MyParser:
             | "integral(" expr "," expr "," expr ")" -> integral
             | "log(" expr "," expr ")" -> log
             
-            
         ?term: num -> num
             | var -> var
 

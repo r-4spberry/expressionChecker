@@ -122,3 +122,17 @@ class SearchNode:
         self.elemRefs = self.getElementsReferences(self.tree)
         self.elemEquivs = self.getAllElemEquivalents(self.elemRefs)
         
+        
+    def forestPretty(self,depth:int = 3,curDepth:int = 0) -> str:
+        ret = " "*curDepth + self.__str__() + "\n"
+        if curDepth < depth:
+            for ch in self.childNodes:
+                ret += ch.forestPretty(depth,curDepth+1)
+        elif len(self.childNodes) != 0:
+            ret += " "*(curDepth+1) + "..." + "\n"
+        
+        
+        return ret
+        
+        
+        

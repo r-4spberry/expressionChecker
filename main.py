@@ -73,6 +73,13 @@ def main():
     print(ans[1])
     print("--------------------------------------------")
     print(ans[2])
+    print("--------------------------------------------")
+    print(checker.forest1.forestPretty(6))
+    print("--------------------------------------------")
+    print(checker.forest2.forestPretty(6))
+    
+    
+    
     
 
 if __name__ == "__main__":

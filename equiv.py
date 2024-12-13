@@ -19,6 +19,8 @@ class Equiv:
 
         ret = ret + Equiv.ruleExpandBrackets(equation)
         ret = ret + Equiv.ruleCombineSum(equation)
+        ret = ret + Equiv.ruleCombineMul(equation)
+        ret = ret + Equiv.ruleInvertFraq(equation)
 
         return ret
 
@@ -75,4 +77,44 @@ class Equiv:
                 
         
         return ret
+    
+    @staticmethod
+    def ruleCombineMul(equation: Tree) -> List[Tree]:
+        ret:List[Tree] = []
+        if equation.data == "mul":
+            arr:List[Tree] = []
+            for ch in equation.children:
+                if ch.data == "mul":
+                    arr = arr+ ch.children
+                else:
+                    arr.append(ch)
+            if len(arr) > len(equation.children):
+                resElem:Tree = Tree("mul",arr)
+                ret.append(resElem)
+            elif len(arr) == 1:
+                ret.append(arr[0])
+                
+        
+        return ret
+    
+    @staticmethod
+    def ruleInvertFraq(equation: Tree) -> List[Tree]:
+        ret:List[Tree] = []
+        if equation.data == "fraq" and len(equation.children) == 2:
+            arr:List[Tree]  = []
+            arr = arr +[equation.children[0]]
+            
+            powArr:List[Tree]  = []
+            powArr = powArr + [equation.children[0]]
+            powArr = powArr + [Tree("num",Token("NUMBER","-1"))]
+            
+            arr = arr + [Tree("pow",powArr)]
+            
+                        
+            resElem:Tree = Tree("mul",arr)
+            
+            ret = ret + [resElem]
+            
+        return ret
+
             
