@@ -43,6 +43,12 @@ class SearchNode:
             for ch in arr[1::]:
                 ans = ans + "-" + ch.__str__()
             ans = ans + ")"
+        elif(self.tree.data == "pow"):
+            ans = ans + "("
+            ans = ans + arr[0].__str__()
+            for ch in arr[1::]:
+                ans = ans + "**" + ch.__str__()
+            ans = ans + ")"
         elif(self.tree.data == "var"):
             ans = self.tree.children[0]
         elif(self.tree.data == "num"):

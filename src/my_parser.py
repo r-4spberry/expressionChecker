@@ -22,20 +22,24 @@ class MyParser:
             | "pow(" expr "," expr ")" -> pow
             | "integral(" expr "," expr "," expr ")" -> integral
             | "log(" expr "," expr ")" -> log
-            
+
         ?term: num -> num
             | var -> var
 
         ?var: "var(" LCASE_LETTER ")"
         
         ?num: "num(" NUMBER ")"
+
+        NUMBER: DECIMAL|FLOAT
         
-        %import common.NUMBER
+        DECIMAL : /-?(0|[1-9]\d*)/i
+        FLOAT: /-?(((\d+\.\d*|\.\d+)(e[-+]?\d+)?|\d+(e[-+]?\d+)))/i
+        
         %import common.CNAME
         %import common.LCASE_LETTER
         %import common.WS
         %ignore WS
-        """
+    """
 
     def parse(self, str_in: str) -> lark.Tree:
         ret: lark.Tree

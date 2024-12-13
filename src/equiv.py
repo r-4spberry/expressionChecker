@@ -105,8 +105,8 @@ class Equiv:
             arr = arr +[equation.children[0]]
             
             powArr:List[Tree]  = []
-            powArr = powArr + [equation.children[0]]
-            powArr = powArr + [Tree("num",Token("NUMBER","-1"))]
+            powArr = powArr + [equation.children[1]]
+            powArr = powArr + [Tree("num",[Token("NUMBER","-1")])]
             
             arr = arr + [Tree("pow",powArr)]
             
