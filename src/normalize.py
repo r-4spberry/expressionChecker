@@ -24,7 +24,7 @@ class NormalizeTree(lark.Transformer):
         return lark.Tree("log", children)
     
     def num(self, children):
-        return lark.Tree("numb", children)
+        return lark.Tree("num", children)
     
     def var(self, children):
         return lark.Tree("var", children)
