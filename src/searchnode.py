@@ -9,55 +9,59 @@ from normalize import NormalizeTree
 
 class SearchNode:
     def __repr__(self):
-        return self.__str__()
+        return SearchNode.equationRepr(self.tree)
     
     def __str__(self):
+        return SearchNode.equationRepr(self.tree)
+    
+    @staticmethod
+    def equationRepr(tree: Tree):
         arr = []
         ans = ""
-        for ch in self.tree.children:
-            try:
-                arr.append(SearchNode(ch))
-            except:
-                arr.append("ERROR")
-        if(self.tree.data == "sum"):
+        for ch in tree.children:
+            if isinstance(ch,Tree):
+                arr.append(ch)
+        if(tree.data == "sum"):
             ans = ans + "("
-            ans = ans + arr[0].__str__()
+            ans = ans + SearchNode.equationRepr(arr[0])
             for ch in arr[1::]:
-                ans = ans + "+" + ch.__str__()
+                ans = ans + "+" + SearchNode.equationRepr(ch)
             ans = ans + ")"
-        elif(self.tree.data == "mul"):
+        elif(tree.data == "mul"):
             ans = ans + "("
-            ans = ans + arr[0].__str__()
+            ans = ans + SearchNode.equationRepr(arr[0])
             for ch in arr[1::]:
-                ans = ans + "*" + ch.__str__()
+                ans = ans + "*" + SearchNode.equationRepr(ch)
             ans = ans + ")"
-        elif(self.tree.data == "fraq"):
+        elif(tree.data == "fraq"):
             ans = ans + "("
-            ans = ans + arr[0].__str__()
+            ans = ans + SearchNode.equationRepr(arr[0])
             for ch in arr[1::]:
-                ans = ans + "/" + ch.__str__()
+                ans = ans + "/" + SearchNode.equationRepr(ch)
             ans = ans + ")"
-        elif(self.tree.data == "sub"):
+        elif(tree.data == "sub"):
             ans = ans + "("
-            ans = ans + arr[0].__str__()
+            ans = ans + SearchNode.equationRepr(arr[0])
             for ch in arr[1::]:
-                ans = ans + "-" + ch.__str__()
+                ans = ans + "-" + SearchNode.equationRepr(ch)
             ans = ans + ")"
-        elif(self.tree.data == "pow"):
+        elif(tree.data == "pow"):
             ans = ans + "("
-            ans = ans + arr[0].__str__()
+            ans = ans + SearchNode.equationRepr(arr[0])
             for ch in arr[1::]:
-                ans = ans + "**" + ch.__str__()
+                ans = ans + "**" + SearchNode.equationRepr(ch)
             ans = ans + ")"
-        elif(self.tree.data == "var"):
-            ans = self.tree.children[0]
-        elif(self.tree.data == "num"):
-            ans = self.tree.children[0]
+        elif(tree.data == "var"):
+            ans = tree.children[0]
+        elif(tree.data == "num"):
+            ans = tree.children[0]
         else:
             ans = "???"
                 
         
         return ans
+        
+        
     
     def __init__(self, equation_or_ancestor):
         parser: MyParser = MyParser()

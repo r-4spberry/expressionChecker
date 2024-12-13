@@ -30,10 +30,13 @@ class ExpressionChecker:
         
         
 
-    def search(self):
+    def search(self,numIter:int  = 100):
         iteration: int = 0
         close1: SearchNode = None
         close2: SearchNode = None
+        
+        if numIter < 0:
+            raise Exception("number of iterations can't be negative")
 
         while True:
             iteration += 1
@@ -75,5 +78,5 @@ class ExpressionChecker:
             if len(self.queue1)  == 0 and len(self.queue2)  == 0:
                 yield  ("n",close1,close2)
 
-            if iteration % 100 == 0:
+            if iteration % numIter == 0:
                 yield ("p",close1, close2)

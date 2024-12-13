@@ -33,7 +33,7 @@ def main():
     
     
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
-    run = checker.search()
+    run = checker.search(100)
     
     ans = next(run)
     
@@ -49,9 +49,6 @@ def main():
     print("forest2:")
     print(checker.forest2.forestPretty(depth = 3))
     print("-------------------------------------------------------")
-    
-    
-    
 
 if __name__ == "__main__":
     main()
