@@ -76,6 +76,22 @@ class TestEquiv(unittest.TestCase):
         
         self.assertEqual(tE,arr[0],SearchNode(tE).__str__() + " " + SearchNode(arr[0]).__str__())
         
+    def test_ruleSumAllNumbers(self):
+        before: str = "sum(mul(num(2), var(a)),num(99),num(-8.5))"
+        after: str = "sum(mul(num(2), var(a)),num(90.5))"
+        
+        tB,tE,arr = TestEquiv.runRule(before,after,Equiv.ruleSumAllNumbers)
+        
+        self.assertEqual(tE,arr[0],SearchNode(tE).__str__() + " " + SearchNode(arr[0]).__str__())
+        
+    def test_ruleSumAllNumbers_zero(self):
+        before: str = "sum(num(99),num(-99))"
+        after: str = "num(0.0)"
+        
+        tB,tE,arr = TestEquiv.runRule(before,after,Equiv.ruleSumAllNumbers)
+        
+        self.assertEqual(tE,arr[0],SearchNode(tE).__str__() + " " + SearchNode(arr[0]).__str__())
+        
         
 
     def test_parseNeg(self):

@@ -217,6 +217,7 @@ class ExpressionChecker:
                 if (mapEntry.node1 is not None) and (mapEntry.node2 is not None):
                     self.close1 = mapEntry.node1
                     self.close2 = mapEntry.node2
+                    self.lowestDistanceBetweenStr = 0
                     self.foundEquivalent = True
                     continue
 
@@ -225,5 +226,6 @@ class ExpressionChecker:
                 if (mapEntry.node1 is not None) and (mapEntry.node2 is not None):
                     self.close1 = mapEntry.node1
                     self.close2 = mapEntry.node2
+                    self.lowestDistanceBetweenStr = 0
                     self.foundEquivalent = True
                     continue

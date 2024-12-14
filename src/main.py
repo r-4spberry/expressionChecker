@@ -26,15 +26,14 @@ def main():
     fraq(
         sum(
             mul(
-                var(biba),
+                var(b),
                 var(c),
-                var(a),
-                udf(lol,num(1),num(2),num(3))
+                var(a)
             ),
             mul(
                 var(d),
                 var(c),
-                var(e)                
+                udf(lol,num(56), var(a_{1}))                
             ),
             mul(
                 pow(var(a),num(7)),
@@ -72,12 +71,13 @@ def main():
     )
     '''
     
-    eq2 = "sum(fraq(mul(var(M_{1}), mul(var(b_{1}), var(T_{1}))), var(W_{1})), fraq(mul(num(-1), mul(var(M_{2}), mul(var(D_{2}), var(T_{2})))), var(W_{2})))"
+    # eq2 = "sum(fraq(mul(var(M_{1}), mul(var(b_{1}), var(T_{1}))), var(W_{1})), fraq(mul(num(-1), mul(var(M_{2}), mul(var(D_{2}), var(T_{2})))), var(W_{2})))"
     
-    
+    # eq1 = "var(1)"
+    # eq2 = "var(1)"
     
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
-    numIter = 5
+    numIter = 500
     run = checker.search(numIter)
     (s,d,n1,n2) = next(run)
     print("--------------------------------------------------")
@@ -93,10 +93,10 @@ def main():
     print("--------------------------------------------------")
     print(n2.lineagePretty(8))
     
-    print(n1.forestPretty())
-    print(n2.forestPretty())
-    print(n1.getGrammarStringRepr())
+    # print(checker.forest1.forestPretty())
+    # print(checker.forest2.forestPretty())
     
+    print(SearchNode(n1.getGrammarStringRepr()))
     
 
 if __name__ == "__main__":

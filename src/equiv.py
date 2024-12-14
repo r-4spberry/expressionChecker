@@ -22,6 +22,7 @@ class Equiv:
         ret = ret + Equiv.ruleInvertFraq(equation)
         ret = ret + Equiv.ruleMutiplyAllNumbers(equation)
         ret = ret + Equiv.ruleCombinePowers(equation)
+        ret = ret + Equiv.ruleSumAllNumbers(equation)
 
         return ret
 
@@ -148,6 +149,39 @@ class Equiv:
                     ret = ret + [resElem]
                 elif len(arr) > 1:
                     resElem: Tree = Tree("mul", arr)
+                    ret = ret + [resElem]
+
+        return ret
+    
+    @staticmethod
+    def ruleSumAllNumbers(equation: Tree) -> List[Tree]:
+        "(a + 100 + -8 + k) = (92 + a + k)"
+        ret: List[Tree] = []
+        if equation.data == "sum":
+            arr = []
+            sum: int = 0
+            numAdd: int = 0
+            for ch in equation.children:
+                if ch.data == "num":
+                    val: float = float(ch.children[0].value)
+                    sum = sum + val
+                    numAdd +=1
+                else:
+                    arr = arr + [ch]
+
+            if numAdd > 1:
+            
+                if sum != 0:
+                    arr.append(Tree("num", [Token("NUMBER", str(sum))]))
+                elif sum == 0 and len(arr) == 0:
+                    arr.append(Tree("num", [Token("NUMBER", str(sum))]))
+                
+                
+                if len(arr) == 1:
+                    resElem: Tree = arr[0]
+                    ret = ret + [resElem]
+                elif len(arr) > 1:
+                    resElem: Tree = Tree("sum", arr)
                     ret = ret + [resElem]
 
         return ret

@@ -113,6 +113,7 @@ class SearchNode:
             ans = ans + "udf"
             ans = ans + "("
             ans = ans + arr[0].children[0]
+            ans = ans + ","
             ans = ans + SearchNode.getGrammarString_static(arr[1])
             for ch in arr[2::]:
                 ans = ans + "," + SearchNode.getGrammarString_static(ch)
