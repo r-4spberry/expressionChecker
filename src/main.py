@@ -36,8 +36,8 @@ def main():
                 var(e)                
             ),
             mul(
-                pow(var(a),num(8)),
-                pow(var(a),num(6)),
+                pow(var(a),num(7)),
+                pow(var(a),num(7)),
                 pow(var(a),num(4))
             )
         ),
@@ -78,10 +78,15 @@ def main():
     numIter = 200
     run = checker.search(numIter)
     (s,n1,n2) = next(run)
-    
-    print(checker.forest1.forestPretty(4))
     print("--------------------------------------------------")
-    print(checker.forest2.forestPretty(4))
+    print("equation 1:")
+    print(checker.strRepr1)
+    print("--------------------------------------------------")
+    print("equation 2:")
+    print(checker.strRepr2)
+    print("--------------------------------------------------")
+    print("result:")
+    print(s)
     print("--------------------------------------------------")
     print(n1.lineagePretty(8))
     print("--------------------------------------------------")

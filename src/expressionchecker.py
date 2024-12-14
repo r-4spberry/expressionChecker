@@ -34,7 +34,7 @@ class ExpressionChecker:
 
         self.addToHeap(self.forest1, self.forest2)
 
-        self.lowestMetric: int = self.heap[0].metricValue
+        self.lowestDistanceBetweenStr: int = self.heap[0].distance
         self.close1: SearchNode = self.heap[0].node1
         self.close2: SearchNode = self.heap[0].node2
 
@@ -62,10 +62,11 @@ class ExpressionChecker:
             return ret
 
     class heapEntry:
-        def __init__(self, eq1: SearchNode, eq2: SearchNode, metric: int):
+        def __init__(self, eq1: SearchNode, eq2: SearchNode, metric: int,distance:int):
             self.metricValue:int = metric
             self.node1: SearchNode = eq1
             self.node2: SearchNode = eq2
+            self.distance: int = distance
             
         def __lt__(self, other):
             return self.metricValue < other.metricValue
@@ -102,15 +103,17 @@ class ExpressionChecker:
         else:
             streq2 = eq2.__str__()
 
-        metricValue: int = metric(self.strRepr1, streq1, streq2, self.strRepr2)
-        value: ExpressionChecker.heapEntry = ExpressionChecker.heapEntry(eq1, eq2,metricValue)
+        
+        distance: int = metric(streq1, streq2)
+        metricValue: int = metric(self.strRepr1, streq1) + distance + metric(streq2, self.strRepr2)
+        value: ExpressionChecker.heapEntry = ExpressionChecker.heapEntry(eq1, eq2,metricValue,distance)
         heapq.heappush(self.heap, value)
 
     def getPairWithLowestMetric(self) -> "ExpressionChecker.heapEntry":
         try:
             ret: ExpressionChecker.heapEntry = heapq.heappop(self.heap)
         except IndexError as e:
-            ret: ExpressionChecker.heapEntry =    ExpressionChecker.heapEntry(None, None, 99999999999)
+            ret: ExpressionChecker.heapEntry =    ExpressionChecker.heapEntry(None, None, 99999999999,99999999999)
             
         return ret
 
@@ -144,10 +147,10 @@ class ExpressionChecker:
                 yield ("n", self.close1, self.close2)
                 continue
 
-            if heapEntry.metricValue < self.lowestMetric:
+            if heapEntry.distance < self.lowestDistanceBetweenStr:
                 self.close1 = heapEntry.node1
                 self.close2 = heapEntry.node2
-                self.lowestMetric = heapEntry.metricValue
+                self.lowestDistanceBetweenStr = heapEntry.distance
 
             exp1: bool = False
             exp2: bool = False
