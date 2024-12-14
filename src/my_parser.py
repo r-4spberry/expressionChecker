@@ -22,11 +22,16 @@ class MyParser:
             | "pow(" expr "," expr ")" -> pow
             | "integral(" expr "," expr "," expr ")" -> integral
             | "log(" expr "," expr ")" -> log
+            | "udf(" funname "," expr ("," expr)* ")" -> udf
+            
+            
 
         ?term: num -> num
             | var -> var
 
-        ?var: "var(" VARNAME ")"
+        ?var: "var(" VARFUNNAME ")"
+        
+        ?funname: VARFUNNAME -> funname
         
         ?num: "num(" NUMBER ")"
 
@@ -34,7 +39,8 @@ class MyParser:
         
         DECIMAL : /-?(0|[1-9]\d*)/i
         FLOAT: /-?(((\d+\.\d*|\.\d+)(e[-+]?\d+)?|\d+(e[-+]?\d+)))/i
-        VARNAME: /[^()\s]+/
+        VARFUNNAME: /[^(),\s]+/
+
 
 
 

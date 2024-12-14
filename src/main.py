@@ -28,7 +28,8 @@ def main():
             mul(
                 var(biba),
                 var(c),
-                var(a)
+                var(a),
+                udf(lol,num(1),num(2),num(3))
             ),
             mul(
                 var(d),
@@ -44,7 +45,7 @@ def main():
         var(h)
     )
     '''
-    
+
     eq2 = '''
     sum(
         mul(
@@ -76,7 +77,7 @@ def main():
     
     
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
-    numIter = 205
+    numIter = 5
     run = checker.search(numIter)
     (s,d,n1,n2) = next(run)
     print("--------------------------------------------------")
@@ -94,6 +95,7 @@ def main():
     
     print(n1.forestPretty())
     print(n2.forestPretty())
+    print(n1.getGrammarStringRepr())
     
     
 

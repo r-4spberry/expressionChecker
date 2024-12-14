@@ -50,6 +50,13 @@ class SearchNode:
             for ch in arr[1::]:
                 ans = ans + "**" + SearchNode.equationRepr(ch)
             ans = ans + ")"
+        elif(tree.data == "udf"):
+            ans = ans + arr[0].children[0]
+            ans = ans + "("
+            ans = ans + SearchNode.equationRepr(arr[1])
+            for ch in arr[2::]:
+                ans = ans + "," + SearchNode.equationRepr(ch)
+            ans = ans + ")"
         elif(tree.data == "var"):
             ans = tree.children[0]
         elif(tree.data == "num"):
@@ -60,7 +67,69 @@ class SearchNode:
         
         return ans
         
+    @staticmethod
+    def getGrammarString_static(tree):
+        arr = []
+        ans = ""
+        for ch in tree.children:
+            if isinstance(ch,Tree):
+                arr.append(ch)
+        if(tree.data == "sum"):
+            ans = ans + "sum"
+            ans = ans + "("
+            ans = ans + SearchNode.getGrammarString_static(arr[0])
+            for ch in arr[1::]:
+                ans = ans + "," + SearchNode.getGrammarString_static(ch)
+            ans = ans + ")"
+        elif(tree.data == "mul"):
+            ans = ans + "mul"
+            ans = ans + "("
+            ans = ans + SearchNode.getGrammarString_static(arr[0])
+            for ch in arr[1::]:
+                ans = ans + "," + SearchNode.getGrammarString_static(ch)
+            ans = ans + ")"
+        elif(tree.data == "fraq"):
+            ans = ans + "fraq"
+            ans = ans + "("
+            ans = ans + SearchNode.getGrammarString_static(arr[0])
+            for ch in arr[1::]:
+                ans = ans + "," + SearchNode.getGrammarString_static(ch)
+            ans = ans + ")"
+        elif(tree.data == "sub"):
+            ans = ans + "sub"
+            ans = ans + "("
+            ans = ans + SearchNode.getGrammarString_static(arr[0])
+            for ch in arr[1::]:
+                ans = ans + "," + SearchNode.getGrammarString_static(ch)
+            ans = ans + ")"
+        elif(tree.data == "pow"):
+            ans = ans + "pow"
+            ans = ans + "("
+            ans = ans + SearchNode.getGrammarString_static(arr[0])
+            for ch in arr[1::]:
+                ans = ans + "," + SearchNode.getGrammarString_static(ch)
+            ans = ans + ")"
+        elif(tree.data == "udf"):
+            ans = ans + "udf"
+            ans = ans + "("
+            ans = ans + arr[0].children[0]
+            ans = ans + SearchNode.getGrammarString_static(arr[1])
+            for ch in arr[2::]:
+                ans = ans + "," + SearchNode.getGrammarString_static(ch)
+            ans = ans + ")"
+        elif(tree.data == "var"):
+            ans = "var(" + tree.children[0] + ")"
+        elif(tree.data == "num"):
+            ans = "num(" + tree.children[0] + ")"
+        else:
+            ans = "???"
+                
         
+        return ans
+        
+        
+    def getGrammarStringRepr(self):
+        return SearchNode.getGrammarString_static(self.tree)
     
     def __init__(self, equation_or_ancestor):
         parser: MyParser = MyParser()
