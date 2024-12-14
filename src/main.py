@@ -26,7 +26,7 @@ def main():
     fraq(
         sum(
             mul(
-                var(b),
+                var(biba),
                 var(c),
                 var(a)
             ),
@@ -71,10 +71,12 @@ def main():
     )
     '''
     
+    eq2 = "sum(fraq(mul(var(M_{1}), mul(var(b_{1}), var(T_{1}))), var(W_{1})), fraq(mul(num(-1), mul(var(M_{2}), mul(var(D_{2}), var(T_{2})))), var(W_{2})))"
+    
     
     
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
-    numIter = 200
+    numIter = 205
     run = checker.search(numIter)
     (s,d,n1,n2) = next(run)
     print("--------------------------------------------------")
@@ -89,6 +91,9 @@ def main():
     print(n1.lineagePretty(8))
     print("--------------------------------------------------")
     print(n2.lineagePretty(8))
+    
+    print(n1.forestPretty())
+    print(n2.forestPretty())
     
     
 

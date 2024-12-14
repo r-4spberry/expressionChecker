@@ -26,7 +26,7 @@ class MyParser:
         ?term: num -> num
             | var -> var
 
-        ?var: "var(" LCASE_LETTER ")"
+        ?var: "var(" VARNAME ")"
         
         ?num: "num(" NUMBER ")"
 
@@ -34,6 +34,11 @@ class MyParser:
         
         DECIMAL : /-?(0|[1-9]\d*)/i
         FLOAT: /-?(((\d+\.\d*|\.\d+)(e[-+]?\d+)?|\d+(e[-+]?\d+)))/i
+        VARNAME: /[^()\s]+/
+
+
+
+
         
         %import common.CNAME
         %import common.LCASE_LETTER
