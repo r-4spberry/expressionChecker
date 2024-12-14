@@ -23,90 +23,69 @@ import numpy as np
 def main():
     
     eq1 = '''
+    fraq(
         sum(
             mul(
-                var(a),
-                num(3),
-                num(9)
+                var(b),
+                var(c),
+                var(a)
             ),
             mul(
-                pow(var(a), num(2)),
-                pow(var(a), var(g))                
+                var(d),
+                var(c),
+                var(e)                
             ),
-            fraq(
-                sum(
-                    var(a), 
-                    var(b)
-                ),
-                var(c)
-            )            
-        )
+            mul(
+                pow(var(a),num(8)),
+                pow(var(a),num(6)),
+                pow(var(a),num(4))
+            )
+        ),
+        var(h)
+    )
     '''
     
     eq2 = '''
+    sum(
         mul(
+            var(a),
+            var(b),
+            var(c),
+            pow(var(h),num(-1))           
+        ),
+        fraq(
             sum(
                 mul(
-                    var(a),
-                    num(3),
-                    num(9)
+                    var(d),
+                    var(c),
+                    var(e)                
                 ),
                 mul(
-                    pow(var(a), num(2)),
-                    pow(var(a), var(g))     
-                )
-                ,
-                fraq(
-                    var(g),
-                    num(288)
+                    pow(var(a),num(8)),
+                    pow(var(a),num(6)),
+                    pow(var(a),num(4))
                 )
             ),
-            num(431)
+            var(h)
         )
+    )
     '''
     
     
     
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
     
-    numIter = 10
+    numIter = 200
     run = checker.search(numIter)
-    start_time = time.time()
+    (s,n1,n2) = next(run)
     
-    ans = next(run)
-    end_time = time.time()
-
-    # Calculate elapsed time
-    elapsed_time = end_time - start_time
-    print("Iterations: ",numIter," Time: ", elapsed_time)
-    print(ans)
-    
-    # print("-------------------------------------------------------")
-    # print("res:")
-    # print(ans[0])
-    # print(ans[1])
-    # print(ans[2])
-    # print("-------------------------------------------------------")
-    # print("forest1:")
-    # print(checker.forest1.forestPretty(depth = 3))
-    # print("-------------------------------------------------------")
-    # print("forest2:")
-    # print(checker.forest2.forestPretty(depth = 3))
-    # print("-------------------------------------------------------")
-    
-
-    str1 = checker.forest1.__str__()
-    str2 = checker.forest2.__str__()
-    
-    
-    start_time = time.time()
-    numIter:int = 1000000
-    for i in range(numIter):
-        distance = Levenshtein.distance(str1, str2)
-    end_time = time.time()
-    
-    print("distance ",distance)
-    print("Iter: ", numIter,"time: ", end_time-start_time)
+    print(checker.forest1.forestPretty(4))
+    print("--------------------------------------------------")
+    print(checker.forest2.forestPretty(4))
+    print("--------------------------------------------------")
+    print(n1.lineagePretty(8))
+    print("--------------------------------------------------")
+    print(n2.lineagePretty(8))
     
 
 if __name__ == "__main__":

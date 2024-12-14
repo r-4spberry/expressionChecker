@@ -79,6 +79,7 @@ class SearchNode:
         self.elemEquivs: List[Tree] = []
         self.childNodes: List[SearchNode] = []
         self.ancestorNode = None
+        self.expanded: bool = False
         
 
     def getAllElemEquivalents(self, arr: List[Tree]) -> List[Tree]:
@@ -119,6 +120,7 @@ class SearchNode:
         self.childNodes = self.getChildNodes()
         for node in self.childNodes:
             node.setAncestor(self)
+            
 
     def setAncestor(self, ancestor:'SearchNode'):
         if not isinstance(ancestor, SearchNode):
@@ -144,6 +146,18 @@ class SearchNode:
         
         
         return ret
+    
+    def lineagePretty(self,depth = 5, curDepth = 0) -> str:
+        ret = ""
+        ret = ret + curDepth*"\t" + self.__str__() + "\n"
+        if self.ancestorNode is not None and depth > 0:
+            ret = ret + self.ancestorNode.lineagePretty(depth-1,curDepth+1)
+        elif self.ancestorNode is None:
+            ret = ret + (curDepth+1)*"\t" + "END OF LINEAGE" + "\n"
+        else:
+            ret = ret + (curDepth+1)*"\t" + "..." + "\n"
+        return ret
+        
         
         
         
