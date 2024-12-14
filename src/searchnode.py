@@ -3,7 +3,6 @@ from my_parser import MyParser
 from copy import deepcopy
 from lark import Tree, Token
 from equiv import Equiv
-from copy import deepcopy
 from normalize import NormalizeTree
 
 
@@ -68,14 +67,16 @@ class SearchNode:
         if isinstance(equation_or_ancestor, str):
             self.tree: Tree = parser.parse(equation_or_ancestor).children[0]
         elif isinstance(equation_or_ancestor, SearchNode):
-            self.tree: Tree = deepcopy(equation_or_ancestor.tree)
+            # self.tree: Tree = deepcopy(equation_or_ancestor.tree)
+            self.tree: Tree = Tree(equation_or_ancestor.tree.data, equation_or_ancestor.tree.children)
         elif isinstance(equation_or_ancestor, Tree):
-            self.tree: Tree = deepcopy(equation_or_ancestor)  
+            # self.tree: Tree = deepcopy(equation_or_ancestor)  
+            self.tree: Tree = Tree(equation_or_ancestor.data, equation_or_ancestor.children)
         else:
             raise TypeError("Expected a string or a Tree")
         self.normalize()
         self.elemRefs: List[Tree] = self.getElementsReferences(self.tree)
-        self.elemEquivs: List[Tree] = self.getAllElemEquivalents(self.elemRefs)
+        self.elemEquivs: List[Tree] = []
         self.childNodes: List[SearchNode] = []
         self.ancestorNode = None
         
@@ -102,7 +103,7 @@ class SearchNode:
         for numRef in range(len(self.elemRefs)):
             for numEq in range(len(self.elemEquivs[numRef])):
                 nextChild: SearchNode = SearchNode(self)
-                nextChild.elemRefs[numRef].data = nextChild.elemEquivs[numRef][numEq].data
+                nextChild.elemRefs[numRef].data = self.elemEquivs[numRef][numEq].data
                 nextChild.elemRefs[numRef].children = deepcopy(
                     self.elemEquivs[numRef][numEq].children
                 )
@@ -114,7 +115,7 @@ class SearchNode:
 
     def findChildNodes(self) -> None:
         "computes all possible equivalents of a tree. adds them to childNodes of a node"
-        
+        self.elemEquivs: List[Tree] = self.getAllElemEquivalents(self.elemRefs)
         self.childNodes = self.getChildNodes()
         for node in self.childNodes:
             node.setAncestor(self)

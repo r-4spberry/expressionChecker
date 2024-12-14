@@ -126,24 +126,29 @@ class Equiv:
         if equation.data == "mul":
             arr = []
             nom: int = 1
+            numMultipliers: int = 0
             for ch in equation.children:
                 if ch.data == "num":
                     val: float = float(ch.children[0].value)
                     nom = nom * val
+                    numMultipliers +=1
                 else:
                     arr = arr + [ch]
 
-            if nom != 1:
-                arr.append(Tree("num", [Token("NUMBER", str(nom))]))
-            elif nom == 1 and len(arr) == 0:
-                arr.append(Tree("num", [Token("NUMBER", str(nom))]))
+            if numMultipliers > 1:
+            
+                if nom != 1:
+                    arr.append(Tree("num", [Token("NUMBER", str(nom))]))
+                elif nom == 1 and len(arr) == 0:
+                    arr.append(Tree("num", [Token("NUMBER", str(nom))]))
 
-            if len(arr) == 1:
-                resElem: Tree = arr[0]
-                ret = ret + [resElem]
-            elif len(arr) > 1:
-                resElem: Tree = Tree("mul", arr)
-                ret = ret + [resElem]
+                
+                if len(arr) == 1:
+                    resElem: Tree = arr[0]
+                    ret = ret + [resElem]
+                elif len(arr) > 1:
+                    resElem: Tree = Tree("mul", arr)
+                    ret = ret + [resElem]
 
         return ret
 
