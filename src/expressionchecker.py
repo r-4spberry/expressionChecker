@@ -45,35 +45,37 @@ class ExpressionChecker:
             self.repr: str = repr
             self.node1: SearchNode = None
             self.node2: SearchNode = None
-            
+
         def __repr__(self):
             ret = "("
             ret = ret + self.repr
             if self.node1 is not None:
-                ret = ret +" node1"
+                ret = ret + " node1"
             else:
                 ret = ret + "  None"
-                
+
             if self.node2 is not None:
-                ret = ret +" node2"
+                ret = ret + " node2"
             else:
                 ret = ret + "  None"
-            ret = ret +")"
+            ret = ret + ")"
             return ret
 
     class heapEntry:
-        def __init__(self, eq1: SearchNode, eq2: SearchNode, metric: int,distance:int):
-            self.metricValue:int = metric
+        def __init__(
+            self, eq1: SearchNode, eq2: SearchNode, metric: int, distance: int
+        ):
+            self.metricValue: int = metric
             self.node1: SearchNode = eq1
             self.node2: SearchNode = eq2
             self.distance: int = distance
-            
+
         def __lt__(self, other):
             return self.metricValue < other.metricValue
 
         def __eq__(self, other):
             return self.metricValue == other.metricValue
-        
+
         def __repr__(self):
             ret = "("
             ret = ret + str(self.metricValue)
@@ -103,18 +105,26 @@ class ExpressionChecker:
         else:
             streq2 = eq2.__str__()
 
-        
-        distance: int = metric(streq1, streq2)
-        metricValue: int = metric(self.strRepr1, streq1) + distance + metric(streq2, self.strRepr2)
-        value: ExpressionChecker.heapEntry = ExpressionChecker.heapEntry(eq1, eq2,metricValue,distance)
+        distance: int = metric(streq1, streq2) / (max(len(streq1), len(streq2)))
+        metricValue: int = (
+            metric(self.strRepr1, streq1)
+            + metric(streq1, streq2)
+            + metric(streq2, self.strRepr2)
+        )
+
+        value: ExpressionChecker.heapEntry = ExpressionChecker.heapEntry(
+            eq1, eq2, metricValue, distance
+        )
         heapq.heappush(self.heap, value)
 
     def getPairWithLowestMetric(self) -> "ExpressionChecker.heapEntry":
         try:
             ret: ExpressionChecker.heapEntry = heapq.heappop(self.heap)
         except IndexError as e:
-            ret: ExpressionChecker.heapEntry =    ExpressionChecker.heapEntry(None, None, 99999999999,99999999999)
-            
+            ret: ExpressionChecker.heapEntry = ExpressionChecker.heapEntry(
+                None, None, 99999999999, 99999999999
+            )
+
         return ret
 
     def addEqToMap(self, eq: SearchNode, first_or_second: int) -> None:
@@ -127,24 +137,29 @@ class ExpressionChecker:
             self.eqMap[eq.tree].node2 = eq
 
     def search(self, numIter: int = 100):
+        """
+        It is an iterator,
+        return[0] - state (p - progress, n - not found, f - found),
+        return[1] - distance between strings in range [0 - 1],
+        return[2] - node descended from str1,
+        return[3] - node descended from str2,
+        """
         iteration: int = 1
 
         while True:
 
             if self.foundEquivalent:
-                yield ("f", self.close1, self.close2)
+                yield ("f", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
                 continue
 
             if iteration % numIter == 0:
-                yield ("p", self.close1, self.close2)
+                yield ("p", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
                 continue
 
-            
             heapEntry = self.getPairWithLowestMetric()
-            
 
             if (heapEntry.node1 is None) and (heapEntry.node2 is None):
-                yield ("n", self.close1, self.close2)
+                yield ("n", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
                 continue
 
             if heapEntry.distance < self.lowestDistanceBetweenStr:
@@ -154,54 +169,48 @@ class ExpressionChecker:
 
             exp1: bool = False
             exp2: bool = False
-            
+
             # expanding all children of node1
             if not heapEntry.node1.expanded:
                 exp1 = True
                 n = heapEntry.node1
                 if (n.tree not in self.eqMap) or (self.eqMap[n.tree].node1 is None):
                     n.findChildNodes()
-                
+
             # expanding all children of node2
             if not heapEntry.node2.expanded:
                 exp2 = True
                 n = heapEntry.node2
-                if (n.tree not in self.eqMap) or (self.eqMap[n.tree].node2 is None):         
+                if (n.tree not in self.eqMap) or (self.eqMap[n.tree].node2 is None):
                     n.findChildNodes()
-            
+
             # adding node1 to map
-            self.addEqToMap(heapEntry.node1,1)
-            
+            self.addEqToMap(heapEntry.node1, 1)
+
             # adding node2 to map
-            self.addEqToMap(heapEntry.node2,2)
-                    
+            self.addEqToMap(heapEntry.node2, 2)
+
             # updating the heap with node1
             if not heapEntry.node1.expanded:
                 for ch1 in heapEntry.node1.childNodes:
                     for k in self.eqMap:
                         if self.eqMap[k].node2 is not None:
-                            self.addToHeap(ch1,self.eqMap[k].node2)
-                        
+                            self.addToHeap(ch1, self.eqMap[k].node2)
+
             # updating the heap with node2
             if not heapEntry.node2.expanded:
                 for ch2 in heapEntry.node2.childNodes:
                     for k in self.eqMap:
                         if self.eqMap[k].node1 is not None:
-                            self.addToHeap(self.eqMap[k].node1,ch2)
-                        
+                            self.addToHeap(self.eqMap[k].node1, ch2)
+
             # marking both nodes expanded
             heapEntry.node1.expanded = True
             heapEntry.node2.expanded = True
-            
-            
-                
-            
-                
-            
-            
+
             if exp1 or exp2:
-                iteration+=1
-            
+                iteration += 1
+
             # checking if we found an equivalence
             if heapEntry.node1 is not None and (heapEntry.node1.tree in self.eqMap):
                 mapEntry: ExpressionChecker.mapEntry = self.eqMap[heapEntry.node1.tree]
@@ -210,7 +219,7 @@ class ExpressionChecker:
                     self.close2 = mapEntry.node2
                     self.foundEquivalent = True
                     continue
-            
+
             if heapEntry.node1 is not None and (heapEntry.node1.tree in self.eqMap):
                 mapEntry: ExpressionChecker.mapEntry = self.eqMap[heapEntry.node2.tree]
                 if (mapEntry.node1 is not None) and (mapEntry.node2 is not None):

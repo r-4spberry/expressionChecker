@@ -74,10 +74,9 @@ def main():
     
     
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
-    
     numIter = 200
     run = checker.search(numIter)
-    (s,n1,n2) = next(run)
+    (s,d,n1,n2) = next(run)
     print("--------------------------------------------------")
     print("equation 1:")
     print(checker.strRepr1)
@@ -85,12 +84,12 @@ def main():
     print("equation 2:")
     print(checker.strRepr2)
     print("--------------------------------------------------")
-    print("result:")
-    print(s)
+    print("result: ",s, "similarity: ",d)
     print("--------------------------------------------------")
     print(n1.lineagePretty(8))
     print("--------------------------------------------------")
     print(n2.lineagePretty(8))
+    
     
 
 if __name__ == "__main__":
