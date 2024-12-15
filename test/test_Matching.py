@@ -102,3 +102,20 @@ class TestMatching(unittest.TestCase):
         ans[2].normalize()
         ans[3].normalize()
         self.assertEqual(ans[2].tree, ans[3].tree)
+        
+    def test_withSameVarNames(self):
+        eq1 = '''
+        sum(sum(var(a), var(b)), var(c))
+        '''
+        eq2 = '''
+        sum(sum(var(c), var(d)), var(e))
+        '''
+        
+        checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+        run = checker.search()
+        ans = next(run)
+        
+        self.assertEqual(ans[0],"f")
+        ans[2].normalize()
+        ans[3].normalize()
+        self.assertEqual(ans[2].tree, ans[3].tree)

@@ -12,7 +12,9 @@ from lark import Tree, Token
 
 
 class ExpressionChecker:
-    def __init__(self, str1: AnyStr, str2: AnyStr,searchUpToVariablesSubstitution = False):
+    def __init__(
+        self, str1: AnyStr, str2: AnyStr, searchUpToVariablesSubstitution=False
+    ):
         self.searchUpToVariablesSubstitution: bool = searchUpToVariablesSubstitution
         self.heap: List[ExpressionChecker.heapEntry] = []
         "used to store pair of equations and a metric associated with them"
@@ -152,23 +154,27 @@ class ExpressionChecker:
             if self.foundEquivalent:
                 yield ("f", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
                 continue
-            
+
             # search is in progress - can continue
             if iteration % numIter == 0:
                 yield ("p", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
                 continue
 
             heapEntry = self.getPairWithLowestMetric()
-            
+
             # search has been complete, no equivalence found
             if (heapEntry.node1 is None) and (heapEntry.node2 is None):
                 yield ("n", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
                 continue
-            
+
             # try to get equality up to a variables
             if self.searchUpToVariablesSubstitution:
                 if (heapEntry.node1 is not None) and (heapEntry.node2 is not None):
-                    (upToVariables1,upToVariables2) = ExpressionChecker.getEqualUpToVariables(heapEntry.node1,heapEntry.node2)
+                    (upToVariables1, upToVariables2) = (
+                        ExpressionChecker.getEqualUpToVariables(
+                            heapEntry.node1, heapEntry.node2
+                        )
+                    )
                     if (upToVariables1 is not None) and (upToVariables2 is not None):
                         upToVariables1.ancestorNode = heapEntry.node1
                         heapEntry.node1.childNodes.append(upToVariables1)
@@ -278,16 +284,6 @@ class ExpressionChecker:
         if len(varArr1) != len(varArr2) and len(varArr1) != 0:
             return (None, None)
 
-        # find matching variables and exclude them
-        arr = []
-        for elem in varArr1:
-            if elem in varArr2:
-                arr.append(elem)
-
-        for elem in arr:
-            varArr2.remove(elem)
-            varArr1.remove(elem)
-
         # try to find fitting substitution
         num: int = 0
         for i in range(len(varArr1)):
@@ -296,7 +292,7 @@ class ExpressionChecker:
                 num += 1
                 sub = Tree("var", [Token("VARFUNNAME", "b_{" + str(num) + "}")])
             varArrSub1.append(sub)
-            num+=1
+            num += 1
 
         num: int = 0
         for i in range(len(varArr2)):
@@ -305,12 +301,10 @@ class ExpressionChecker:
                 num += 1
                 sub = Tree("var", [Token("VARFUNNAME", "c_{" + str(num) + "}")])
             varArrSub2.append(sub)
-            num+=1
+            num += 1
 
         for i in range(len(varArr1)):
-            varArrSub3.append(
-                Tree("var", [Token("VARFUNNAME", "a_{" + str(i) + "}")])
-            )
+            varArrSub3.append(Tree("var", [Token("VARFUNNAME", "a_{" + str(i) + "}")]))
 
         eq1_res: SearchNode = SearchNode(eq1)
         eq2_res: SearchNode = SearchNode(eq2)
@@ -319,7 +313,7 @@ class ExpressionChecker:
         for i in range(len(varArr1)):
             eq1_res.replaceVariable(varArr1[i], varArrSub1[i])
             eq2_res.replaceVariable(varArr2[i], varArrSub2[i])
-            
+
         varArr1 = varArrSub1
         varArr2 = varArrSub2
 
@@ -347,7 +341,7 @@ class ExpressionChecker:
                     subIn1 = varArr1[0]
                     subIn2 = elem
                     found = True
-                    
+
                     varArr1.remove(subIn1)
                     varArr2.remove(subIn2)
                     varArrSub3.remove(sub)
