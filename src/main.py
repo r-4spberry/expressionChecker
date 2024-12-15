@@ -23,72 +23,20 @@ import numpy as np
 def main():
     
     eq1 = '''
-    fraq(
-        sum(
-            mul(
-                var(b),
-                var(c),
-                var(a)
-            ),
-            mul(
-                var(d),
-                var(c),
-                udf(lol,num(56), var(a_{1}))                
-            ),
-            mul(
-                pow(var(a),num(7)),
-                pow(var(a),num(7)),
-                pow(var(a),num(4))
-            )
-        ),
-        var(h)
-    )
+    udf(f, pow(var(c), sum(sum(num(2), num(3)), var(e))))
     '''
 
     eq2 = '''
-    sum(
-        mul(
-            var(a),
-            var(b),
-            var(c),
-            pow(var(h),num(-1))           
-        ),
-        fraq(
-            sum(
-                mul(
-                    var(d),
-                    var(c),
-                    var(e)                
-                ),
-                mul(
-                    pow(var(a),num(8)),
-                    pow(var(a),num(6)),
-                    pow(var(a),num(4))
-                )
-            ),
-            var(h)
-        )
-    )
+    udf(f, pow(var(a), sum(sum(var(b), num(1)), num(4))))
     '''
     
     # eq2 = "sum(fraq(mul(var(M_{1}), mul(var(b_{1}), var(T_{1}))), var(W_{1})), fraq(mul(num(-1), mul(var(M_{2}), mul(var(D_{2}), var(T_{2})))), var(W_{2})))"
     
     eq1 = '''
-        fraq(
-            num(288),
-            mul(
-                num(8),
-                num(3),
-                var(g)
-            )
-        )
+        udf(f, pow(var(c), sum(sum(num(2), num(3)), var(e))))
         '''
     eq2 = '''
-        fraq(
-            num(12),
-            var(g)
-            
-        )
+        udf(f, pow(var(a), sum(sum(var(b), num(1)), num(4))))
         '''
     
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)

@@ -15,6 +15,8 @@ class ExpressionChecker:
     def __init__(
         self, str1: AnyStr, str2: AnyStr, searchUpToVariablesSubstitution=False
     ):
+        self.seenPairs = set()
+
         self.searchUpToVariablesSubstitution: bool = searchUpToVariablesSubstitution
         self.heap: List[ExpressionChecker.heapEntry] = []
         "used to store pair of equations and a metric associated with them"
@@ -95,6 +97,11 @@ class ExpressionChecker:
         eq2: SearchNode,
         metric: callable = Metrics.levenshteinMetric,
     ) -> None:
+        pair_key = (id(eq1), id(eq2))
+        if pair_key in self.seenPairs:
+            return
+        self.seenPairs.add(pair_key)
+
         streq1: str = ""
         streq2: str = ""
 
@@ -109,11 +116,10 @@ class ExpressionChecker:
             streq2 = eq2.__str__()
 
         distance: int = metric(streq1, streq2) / (max(len(streq1), len(streq2)))
-        metricValue: int = (
-            metric(self.strRepr1, streq1)
-            + metric(streq1, streq2)
-            + metric(streq2, self.strRepr2)
-        )
+        dist_1 = metric(self.strRepr1, streq1) / max(len(self.strRepr1), len(streq1))
+        dist_2 = metric(streq1, streq2) / max(len(streq1), len(streq2))
+        dist_3 = metric(streq2, self.strRepr2) / max(len(streq2), len(self.strRepr2))
+        metricValue: int = dist_1 + dist_2 + dist_3
 
         value: ExpressionChecker.heapEntry = ExpressionChecker.heapEntry(
             eq1, eq2, metricValue, distance
@@ -150,6 +156,7 @@ class ExpressionChecker:
         iteration: int = 1
 
         while True:
+
             # search has been copmlete, equivalence found
             if self.foundEquivalent:
                 yield ("f", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
@@ -161,7 +168,7 @@ class ExpressionChecker:
                 continue
 
             heapEntry = self.getPairWithLowestMetric()
-
+            print(heapEntry.node1, heapEntry.node2)
             # search has been complete, no equivalence found
             if (heapEntry.node1 is None) and (heapEntry.node2 is None):
                 yield ("n", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
@@ -216,13 +223,20 @@ class ExpressionChecker:
             # updating the heap with node1
             if not heapEntry.node1.expanded:
                 for ch1 in heapEntry.node1.childNodes:
+                    # Match with children of node2
+                    for ch2 in heapEntry.node2.childNodes:
+                        self.addToHeap(ch1, ch2)  # Add direct child pair
+                    # Match with all node2 entries from eqMap
                     for k in self.eqMap:
                         if self.eqMap[k].node2 is not None:
                             self.addToHeap(ch1, self.eqMap[k].node2)
 
-            # updating the heap with node2
             if not heapEntry.node2.expanded:
                 for ch2 in heapEntry.node2.childNodes:
+                    # Match with children of node1
+                    for ch1 in heapEntry.node1.childNodes:
+                        self.addToHeap(ch1, ch2)  # Add direct child pair
+                    # Match with all node1 entries from eqMap
                     for k in self.eqMap:
                         if self.eqMap[k].node1 is not None:
                             self.addToHeap(self.eqMap[k].node1, ch2)
