@@ -2,7 +2,7 @@ import unittest
 from searchnode import SearchNode
 from expressionchecker import ExpressionChecker
 
-class TestSubstitutions(unittest.TestCase):
+class TestMatching(unittest.TestCase):
     
     def setUp(self):
         """Initialize reusable objects for tests."""
@@ -62,4 +62,43 @@ class TestSubstitutions(unittest.TestCase):
         )
         '''
         
-        checker: ExpressionChecker = ExpressionChecker()
+        checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+        run = checker.search()
+        ans = next(run)
+        
+        self.assertEqual(ans[0],"f")
+        ans[2].normalize()
+        ans[3].normalize()
+        self.assertEqual(ans[2].tree, ans[3].tree)
+        
+        
+    
+    def test_withTrailingZeros(self):
+        eq1 = '''
+        mul(
+            mul(
+                num(-8),
+                num(100),
+                var(a)
+            ),
+            var(k)
+        )
+        '''
+        eq2 = '''
+        mul(
+            mul(
+                num(-800),
+                var(a)
+            ),
+            var(k)
+        )
+        '''
+        
+        checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+        run = checker.search()
+        ans = next(run)
+        
+        self.assertEqual(ans[0],"f")
+        ans[2].normalize()
+        ans[3].normalize()
+        self.assertEqual(ans[2].tree, ans[3].tree)

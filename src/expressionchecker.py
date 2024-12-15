@@ -160,6 +160,11 @@ class ExpressionChecker:
 
             heapEntry = self.getPairWithLowestMetric()
             
+            # search has been complete, no equivalence found
+            if (heapEntry.node1 is None) and (heapEntry.node2 is None):
+                yield ("n", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
+                continue
+            
             # try to get equality up to a variables
             if self.searchUpToVariablesSubstitution:
                 if (heapEntry.node1 is not None) and (heapEntry.node2 is not None):
@@ -173,11 +178,6 @@ class ExpressionChecker:
                         self.close2 = upToVariables2
                         self.lowestDistanceBetweenStr = 0
                         self.foundEquivalent = True
-            
-            # search has been complete, no equivalence found
-            if (heapEntry.node1 is None) and (heapEntry.node2 is None):
-                yield ("n", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
-                continue
 
             if heapEntry.distance < self.lowestDistanceBetweenStr:
                 self.close1 = heapEntry.node1

@@ -23,6 +23,7 @@ class Equiv:
         ret = ret + Equiv.ruleMutiplyAllNumbers(equation)
         ret = ret + Equiv.ruleCombinePowers(equation)
         ret = ret + Equiv.ruleSumAllNumbers(equation)
+        ret = ret + Equiv.ruleRemoveZerosFromNum(equation)
 
         return ret
 
@@ -237,4 +238,22 @@ class Equiv:
                             retElem = Tree("mul", resArr)
                             ret = ret + [retElem]
 
+        return ret
+    
+    @staticmethod
+    def ruleRemoveZerosFromNum(equation: Tree) -> List[Tree]:
+        "09867.56780000 = 9867.5678"
+        ret: List[Tree] = []
+        if equation.data == "num":
+            tok: Token = equation.children[0]
+            num_str: str = tok.value
+            num = float(num_str)
+            if num.is_integer():
+                cleaned_str = str(int(num))
+            else:
+                cleaned_str = str(num)
+                
+            if cleaned_str != num_str:
+                resElem = Tree("num",[Token("NUMBER",cleaned_str)])
+                ret = ret + [resElem]
         return ret

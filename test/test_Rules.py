@@ -92,6 +92,22 @@ class TestEquiv(unittest.TestCase):
         
         self.assertEqual(tE,arr[0],SearchNode(tE).__str__() + " " + SearchNode(arr[0]).__str__())
         
+    def test_ruleRemoveZerosFromNum_leadingAndFollowing(self):
+        before: str = "num(099987.45454500000)"
+        after: str = "num(99987.454545)"
+        
+        tB,tE,arr = TestEquiv.runRule(before,after,Equiv.ruleRemoveZerosFromNum)
+        
+        self.assertEqual(tE,arr[0],SearchNode(tE).__str__() + " " + SearchNode(arr[0]).__str__())
+        
+    def test_ruleRemoveZerosFromNum_decimalPoint(self):
+        before: str = "num(900.0000)"
+        after: str = "num(900)"
+        
+        tB,tE,arr = TestEquiv.runRule(before,after,Equiv.ruleRemoveZerosFromNum)
+        
+        self.assertEqual(tE,arr[0],SearchNode(tE).__str__() + " " + SearchNode(arr[0]).__str__())
+        
         
 
     def test_parseNeg(self):
