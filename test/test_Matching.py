@@ -119,3 +119,79 @@ class TestMatching(unittest.TestCase):
         ans[2].normalize()
         ans[3].normalize()
         self.assertEqual(ans[2].tree, ans[3].tree)
+        
+    def test_multiplyByZero(self):
+        eq1 = '''
+        mul(sum(var(a), var(b)), var(c), num(0),var(g))
+        '''
+        eq2 = '''
+        num(0)
+        '''
+        
+        checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+        run = checker.search()
+        ans = next(run)
+        
+        
+        ans[2].normalize()
+        ans[3].normalize()
+        
+        self.assertEqual(ans[2].tree, ans[3].tree)
+        self.assertEqual(ans[0],"f")
+        
+    def test_multiplyByOne(self):
+        eq1 = '''
+        mul(sum(var(a), var(b)), num(1))
+        '''
+        eq2 = '''
+        sum(var(a), var(b))
+        '''
+        
+        checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+        run = checker.search()
+        ans = next(run)
+        
+        
+        ans[2].normalize()
+        ans[3].normalize()
+        
+        self.assertEqual(ans[2].tree, ans[3].tree)
+        self.assertEqual(ans[0],"f")
+    
+    def test_addZero(self):
+        eq1 = '''
+        sum(var(a),var(b),num(0))
+        '''
+        eq2 = '''
+        sum(var(a),var(b))
+        '''
+        
+        checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+        run = checker.search()
+        ans = next(run)
+        
+        
+        ans[2].normalize()
+        ans[3].normalize()
+        
+        self.assertEqual(ans[2].tree, ans[3].tree)
+        self.assertEqual(ans[0],"f")
+        
+    def test_addSame(self):
+        eq1 = '''
+        sum(var(a),var(a))
+        '''
+        eq2 = '''
+        mul(var(a), num(2))
+        '''
+        
+        checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+        run = checker.search()
+        ans = next(run)
+        
+        
+        ans[2].normalize()
+        ans[3].normalize()
+        
+        self.assertEqual(ans[2].tree, ans[3].tree)
+        self.assertEqual(ans[0],"f")

@@ -74,10 +74,10 @@ def main():
     # eq2 = "sum(fraq(mul(var(M_{1}), mul(var(b_{1}), var(T_{1}))), var(W_{1})), fraq(mul(num(-1), mul(var(M_{2}), mul(var(D_{2}), var(T_{2})))), var(W_{2})))"
     
     eq1 = '''
-    sum(sum(var(a), var(b)), var(c))
-    '''
+        sum(var(a),var(a))
+        '''
     eq2 = '''
-    sum(sum(var(c), var(d)), var(e))
+    mul(var(a), num(2))
     '''
     
     checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)

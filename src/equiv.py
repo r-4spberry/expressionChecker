@@ -24,6 +24,8 @@ class Equiv:
         ret = ret + Equiv.ruleCombinePowers(equation)
         ret = ret + Equiv.ruleSumAllNumbers(equation)
         ret = ret + Equiv.ruleRemoveZerosFromNum(equation)
+        ret = ret + Equiv.ruleAddZero(equation)
+        ret = ret + Equiv.ruleMultiplyByOne(equation)
 
         return ret
 
@@ -137,8 +139,13 @@ class Equiv:
                 else:
                     arr = arr + [ch]
 
-            if numMultipliers > 1:
             
+            if nom == 0:
+                if numMultipliers > 1 or len(arr) > 0:
+                    resElem =Tree("num",[Token("NUMBER", "0")])
+                    ret = ret + [resElem]
+            elif numMultipliers > 1:
+                
                 if nom != 1:
                     arr.append(Tree("num", [Token("NUMBER", str(nom))]))
                 elif nom == 1 and len(arr) == 0:
@@ -184,6 +191,62 @@ class Equiv:
                 elif len(arr) > 1:
                     resElem: Tree = Tree("sum", arr)
                     ret = ret + [resElem]
+
+        return ret
+    
+    @staticmethod
+    def ruleAddZero(equation: Tree) -> List[Tree]:
+        "(a + 0) = (a)"
+        ret: List[Tree] = []
+        if equation.data == "sum":
+            arr = []
+            sum: int = 0
+            numZeros: int = 0
+            for ch in equation.children:
+                if ch.data == "num" and float(ch.children[0].value) == 0:
+                    numZeros +=1
+                else:
+                    arr = arr + [ch]
+
+            if numZeros > 0:
+            
+                if len(arr) == 0:
+                    arr = arr + [Tree("num", [Token("NUMBER","0")])]
+                    
+                if len(arr) > 1:
+                    resElem = Tree("sum",arr)
+                    ret = ret + [resElem]
+                elif len(arr) == 1:
+                    resElem = arr[0]
+                    ret = ret + [resElem]
+                     
+
+        return ret
+    
+    @staticmethod
+    def ruleMultiplyByOne(equation: Tree) -> List[Tree]:
+        "((a+b)*1) = (a+b)"
+        ret: List[Tree] = []
+        if equation.data == "mul":
+            arr = []
+            numOnes: int = 0
+            for ch in equation.children:
+                if (ch.data == "num") and (float(ch.children[0].value) == 1):
+                    numOnes +=1
+                else:
+                    arr = arr + [ch]
+
+            if numOnes > 0:
+                if len(arr) == 0:
+                    arr = arr + [Tree("num", [Token("NUMBER","1")])]
+                    
+                if len(arr) > 1:
+                    resElem = Tree("mul",arr)
+                    ret = ret + [resElem]
+                elif len(arr) == 1:
+                    resElem = arr[0]
+                    ret = ret + [resElem]
+                     
 
         return ret
 
