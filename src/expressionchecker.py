@@ -162,16 +162,17 @@ class ExpressionChecker:
             
             # try to get equality up to a variables
             if self.searchUpToVariablesSubstitution:
-                (upToVariables1,upToVariables2) = ExpressionChecker.getEqualUpToVariables(heapEntry.node1,heapEntry.node2)
-                if (upToVariables1 is not None) and (upToVariables2 is not None):
-                    upToVariables1.ancestorNode = heapEntry.node1
-                    heapEntry.node1.childNodes.append(upToVariables1)
-                    upToVariables2.ancestorNode = heapEntry.node2
-                    heapEntry.node2.childNodes.append(upToVariables2)
-                    self.close1 = upToVariables1
-                    self.close2 = upToVariables2
-                    self.lowestDistanceBetweenStr = 0
-                    self.foundEquivalent = True
+                if (heapEntry.node1 is not None) and (heapEntry.node2 is not None):
+                    (upToVariables1,upToVariables2) = ExpressionChecker.getEqualUpToVariables(heapEntry.node1,heapEntry.node2)
+                    if (upToVariables1 is not None) and (upToVariables2 is not None):
+                        upToVariables1.ancestorNode = heapEntry.node1
+                        heapEntry.node1.childNodes.append(upToVariables1)
+                        upToVariables2.ancestorNode = heapEntry.node2
+                        heapEntry.node2.childNodes.append(upToVariables2)
+                        self.close1 = upToVariables1
+                        self.close2 = upToVariables2
+                        self.lowestDistanceBetweenStr = 0
+                        self.foundEquivalent = True
             
             # search has been complete, no equivalence found
             if (heapEntry.node1 is None) and (heapEntry.node2 is None):
