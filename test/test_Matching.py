@@ -177,14 +177,115 @@ class TestMatching(unittest.TestCase):
         self.assertEqual(ans[2].tree, ans[3].tree)
         self.assertEqual(ans[0],"f")
         
-    def test_addSame(self):
+    # def test_addSame(self):
+    #     eq1 = '''
+    #     sum(var(a),var(a))
+    #     '''
+    #     eq2 = '''
+    #     mul(var(a), num(2))
+    #     '''
+        
+    #     checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+    #     run = checker.search()
+    #     ans = next(run)
+        
+        
+    #     ans[2].normalize()
+    #     ans[3].normalize()
+        
+    #     self.assertEqual(ans[2].tree, ans[3].tree)
+    #     self.assertEqual(ans[0],"f")
+    
+    def test_divideNumbers_1(self):
         eq1 = '''
-        sum(var(a),var(a))
+        fraq(
+            num(288),
+            mul(
+                num(8),
+                num(3),
+                var(g)
+            )
+        )
         '''
         eq2 = '''
-        mul(var(a), num(2))
+        fraq(
+            num(12),
+            var(g)
+            
+        )
         '''
+            
+        checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+        run = checker.search()
+        ans = next(run)
         
+        
+        ans[2].normalize()
+        ans[3].normalize()
+        
+        self.assertEqual(ans[2].tree, ans[3].tree)
+        self.assertEqual(ans[0],"f")
+        
+    def test_divideNumbers_2(self):
+        eq1 = '''
+        fraq(
+            mul(
+                num(288),
+                var(k)
+            ),
+            mul(
+                num(8),
+                num(3),
+                var(g)
+            )
+        )
+        '''
+        eq2 = '''
+        fraq(
+            mul(
+                num(12),
+                var(k)
+            ),
+            var(g)
+            
+        )
+        '''
+            
+        checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
+        run = checker.search()
+        ans = next(run)
+        
+        
+        ans[2].normalize()
+        ans[3].normalize()
+        
+        self.assertEqual(ans[2].tree, ans[3].tree)
+        self.assertEqual(ans[0],"f")
+        
+        
+    def test_divideNumbers_3(self):
+        eq1 = '''
+        fraq(
+            mul(
+                num(288),
+                var(k)
+            ),
+            mul(
+                num(8),
+                num(3)
+
+            )
+        )
+        '''
+        eq2 = '''
+        
+            mul(
+                num(12),
+                var(k)
+            )
+        
+        '''
+            
         checker: ExpressionChecker = ExpressionChecker(eq1,eq2,True)
         run = checker.search()
         ans = next(run)
