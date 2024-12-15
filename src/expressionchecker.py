@@ -8,11 +8,12 @@ from copy import deepcopy
 from normalize import NormalizeTree
 import heapq
 from metrics import Metrics
-from lark import Tree
+from lark import Tree, Token
 
 
 class ExpressionChecker:
-    def __init__(self, str1: AnyStr, str2: AnyStr):
+    def __init__(self, str1: AnyStr, str2: AnyStr,searchUpToVariablesSubstitution = False):
+        self.searchUpToVariablesSubstitution: bool = searchUpToVariablesSubstitution
         self.heap: List[ExpressionChecker.heapEntry] = []
         "used to store pair of equations and a metric associated with them"
         heapq.heapify(self.heap)
@@ -147,17 +148,32 @@ class ExpressionChecker:
         iteration: int = 1
 
         while True:
-
+            # search has been copmlete, equivalence found
             if self.foundEquivalent:
                 yield ("f", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
                 continue
-
+            
+            # search is in progress - can continue
             if iteration % numIter == 0:
                 yield ("p", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
                 continue
 
             heapEntry = self.getPairWithLowestMetric()
-
+            
+            # try to get equality up to a variables
+            if self.searchUpToVariablesSubstitution:
+                (upToVariables1,upToVariables2) = ExpressionChecker.getEqualUpToVariables(heapEntry.node1,heapEntry.node2)
+                if (upToVariables1 is not None) and (upToVariables2 is not None):
+                    upToVariables1.ancestorNode = heapEntry.node1
+                    heapEntry.node1.childNodes.append(upToVariables1)
+                    upToVariables2.ancestorNode = heapEntry.node2
+                    heapEntry.node2.childNodes.append(upToVariables2)
+                    self.close1 = upToVariables1
+                    self.close2 = upToVariables2
+                    self.lowestDistanceBetweenStr = 0
+                    self.foundEquivalent = True
+            
+            # search has been complete, no equivalence found
             if (heapEntry.node1 is None) and (heapEntry.node2 is None):
                 yield ("n", 1 - self.lowestDistanceBetweenStr, self.close1, self.close2)
                 continue
@@ -229,3 +245,122 @@ class ExpressionChecker:
                     self.lowestDistanceBetweenStr = 0
                     self.foundEquivalent = True
                     continue
+
+    @staticmethod
+    def getEqualUpToVariables(
+        eq1: SearchNode, eq2: SearchNode
+    ) -> Tuple[SearchNode, SearchNode]:
+        "if found, returns 2 search nodes - for first and second equation respectively. Otherwise returns (None, None)"
+        varArr1: List[Tree] = []
+        varArr2: List[Tree] = []
+        varArrSub1: List[Tree] = []
+        varArrSub2: List[Tree] = []
+        varArrSub3: List[Tree] = []
+
+        eq1_res: SearchNode = None
+        eq2_res: SearchNode = None
+
+        eq1_copy: SearchNode = None
+        eq2_copy: SearchNode = None
+
+        for ref in eq1.elemRefs:
+            if isinstance(ref, Tree) and ref.data == "var":
+                if ref not in varArr1:
+                    varArr1 = varArr1 + [ref]
+
+        for ref in eq2.elemRefs:
+            if isinstance(ref, Tree) and ref.data == "var":
+                if ref not in varArr2:
+                    varArr2 = varArr2 + [ref]
+
+        # are of the same length?
+        if len(varArr1) != len(varArr2) and len(varArr1) != 0:
+            return (None, None)
+
+        # find matching variables and exclude them
+        arr = []
+        for elem in varArr1:
+            if elem in varArr2:
+                arr.append(elem)
+
+        for elem in arr:
+            varArr2.remove(elem)
+            varArr1.remove(elem)
+
+        # try to find fitting substitution
+        num: int = 0
+        for i in range(len(varArr1)):
+            sub = Tree("var", [Token("VARFUNNAME", "b_{" + str(num) + "}")])
+            while sub in varArr1:
+                num += 1
+                sub = Tree("var", [Token("VARFUNNAME", "b_{" + str(num) + "}")])
+            varArrSub1.append(sub)
+            num+=1
+
+        num: int = 0
+        for i in range(len(varArr2)):
+            sub = Tree("var", [Token("VARFUNNAME", "c_{" + str(num) + "}")])
+            while sub in varArr2:
+                num += 1
+                sub = Tree("var", [Token("VARFUNNAME", "c_{" + str(num) + "}")])
+            varArrSub2.append(sub)
+            num+=1
+
+        for i in range(len(varArr1)):
+            varArrSub3.append(
+                Tree("var", [Token("VARFUNNAME", "a_{" + str(i) + "}")])
+            )
+
+        eq1_res: SearchNode = SearchNode(eq1)
+        eq2_res: SearchNode = SearchNode(eq2)
+
+        # changing variables to a_{1} and b_{1}
+        for i in range(len(varArr1)):
+            eq1_res.replaceVariable(varArr1[i], varArrSub1[i])
+            eq2_res.replaceVariable(varArr2[i], varArrSub2[i])
+            
+        varArr1 = varArrSub1
+        varArr2 = varArrSub2
+
+        dummyVar: Tree = Tree("var", [Token("VARFUNNAME", "d")])
+
+        # number of variables we substitute
+        while len(varArr1) != 0:
+            found: bool = False
+            sub: Tree = varArrSub3[0]
+            subIn1: Tree = None
+            subIn2: Tree = None
+            eq1_copy = SearchNode(eq1_res)
+            eq1_copy.replaceVariable(varArr1[0], sub)
+            for i in range(1, len(varArr1)):
+                eq1_copy.replaceVariable(varArr1[i], dummyVar)
+            for elem in varArr2:
+                eq2_copy = SearchNode(eq2_res)
+                eq2_copy.replaceVariable(elem, sub)
+                for j in range(len(varArr2)):
+                    if elem != varArr2[j]:
+                        eq2_copy.replaceVariable(varArr2[j], dummyVar)
+                eq1_copy.normalize()
+                eq2_copy.normalize()
+                if eq2_copy.tree == eq1_copy.tree:
+                    subIn1 = varArr1[0]
+                    subIn2 = elem
+                    found = True
+                    
+                    varArr1.remove(subIn1)
+                    varArr2.remove(subIn2)
+                    varArrSub3.remove(sub)
+
+                    break
+            if found:
+                eq1_res.replaceVariable(subIn1, sub)
+                eq2_res.replaceVariable(subIn2, sub)
+            else:
+                return (None, None)
+
+        eq1_res.normalize()
+        eq2_res.normalize()
+        if eq1_res.tree != eq2_res.tree:
+            return (None, None)
+
+        return (eq1_res, eq2_res)

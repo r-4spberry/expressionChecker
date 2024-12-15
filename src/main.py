@@ -73,10 +73,60 @@ def main():
     
     # eq2 = "sum(fraq(mul(var(M_{1}), mul(var(b_{1}), var(T_{1}))), var(W_{1})), fraq(mul(num(-1), mul(var(M_{2}), mul(var(D_{2}), var(T_{2})))), var(W_{2})))"
     
-    # eq1 = "var(1)"
-    # eq2 = "var(1)"
+    eq1 = '''
+    sum(
+        fraq(
+            mul(
+                var(l),
+                var(b),
+                var(c)
+            ),
+            var(kl)          
+        ),
+        fraq(
+            sum(
+                mul(
+                    var(d),
+                    var(c),
+                    var(e)                
+                ),
+                mul(
+                    pow(var(l),num(8)),
+                    pow(var(l),num(6)),
+                    pow(var(l),num(4))
+                )
+            ),
+            var(kl)
+        )
+    )
+    '''
+    eq2 = '''
+    sum(
+        mul(
+            var(a),
+            var(b),
+            var(c),
+            pow(var(h),num(-1))           
+        ),
+        fraq(
+            sum(
+                mul(
+                    var(d),
+                    var(c),
+                    var(e)                
+                ),
+                mul(
+                    pow(var(a),num(8)),
+                    pow(var(a),num(6)),
+                    pow(var(a),num(4))
+                )
+            ),
+            var(h)
+        )
+    )
+    '''
     
-    checker: ExpressionChecker = ExpressionChecker(eq1,eq2)
+    checker: ExpressionChecker = ExpressionChecker(eq1,eq2,False)
     numIter = 500
     run = checker.search(numIter)
     (s,d,n1,n2) = next(run)
@@ -97,6 +147,10 @@ def main():
     # print(checker.forest2.forestPretty())
     
     print(SearchNode(n1.getGrammarStringRepr()))
+    
+    # ans = ExpressionChecker.getEqualUpToVariables(checker.forest1,checker.forest2)
+    
+    # print(ans)
     
 
 if __name__ == "__main__":

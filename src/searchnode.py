@@ -229,5 +229,11 @@ class SearchNode:
         return ret
         
         
+    def replaceVariable(self,varToSub:Tree, varToSubWith:Tree) -> None:
+        for elem in self.elemRefs:
+            if elem == varToSub:
+                elem.data = varToSubWith.data
+                elem.children = deepcopy(varToSubWith.children)
+        # self.elemRefs: List[Tree] = self.getElementsReferences(self.tree)
         
         
